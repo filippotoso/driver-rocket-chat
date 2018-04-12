@@ -23,7 +23,7 @@ This driver requires a valid and secure URL in order to set up webhooks and rece
 
 [ngrok](https://ngrok.com/) is a great tool to create such a public HTTPS URL for your local application. If you use Laravel Valet, you can create it with "valet share" as well.
 
-To connect BotMan with your RocketChat server, you need to create 2 integrations: one for incoming messages and one for outcoming ones. You can find more details about this process in the [RocketChat documentation](https://rocket.chat/docs/administrator-guides/integrations/).
+To connect BotMan with your RocketChat server, you need to create 2 integrations: one for incoming messages and one for outgoing ones. You can find more details about this process in the [RocketChat documentation](https://rocket.chat/docs/administrator-guides/integrations/).
 
 Once you have setup the integrations, you need to configure the driver. Open the app/config/botman/rocketchat.php file and insert the required information in the tokens and endpoint parameters. Don't touch the 'matchingKeys' array.
 
