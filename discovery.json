@@ -1,0 +1,8 @@
+{
+    "botman/driver-config": [
+        "stubs/rocketchat.php"
+    ],
+    "botman/driver": [
+        "FilippoToso\\BotMan\\Drivers\\RocketChat\\RocketChatDriver"
+    ]
+}

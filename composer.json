@@ -1,0 +1,43 @@
+{
+    "name": "filippo-toso/driver-rocket-chat",
+    "license": "MIT",
+    "description": "Rocket Chat driver for BotMan",
+    "keywords": [
+        "Bot",
+        "BotMan",
+        "RocketChat"
+    ],
+    "homepage": "http://github.com/filippo.toso/driver-rocket-chat",
+    "authors": [
+        {
+            "name": "Filippo Toso",
+            "email": "filippo.toso@creativepark.it"
+        }
+    ],
+    "require": {
+        "php": ">=7.0",
+        "botman/botman": "~2.0"
+    },
+    "require-dev": {
+        "illuminate/contracts": "~5.5.0",
+        "ext-curl": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "FilippoToso\\BotMan\\Drivers\\RocketChat\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+        }
+    },
+    "scripts": {
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "FilippoToso\\BotMan\\Drivers\\RocketChat\\Providers\\RocketChatServiceProvider"
+            ]
+        }
+    }
+}
