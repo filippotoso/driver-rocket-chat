@@ -131,7 +131,6 @@ class RocketChatDriver extends HttpDriver
         ], true);
 
         return $response;
-
     }
 
 }
