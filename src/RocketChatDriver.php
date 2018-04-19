@@ -125,7 +125,7 @@ class RocketChatDriver extends HttpDriver
     */
     public function sendPayload($payload)
     {
-        $url = str_finish($this->config->get('endpoint'), '/') . $this->config->get('tokens')['incoming'];
+        $url = rtrim($this->config->get('endpoint'), '/') . '/' . $this->config->get('tokens')['incoming'];
         $response = $this->http->post($url, [], $payload, [
             'Content-Type: application/json',
         ], true);
