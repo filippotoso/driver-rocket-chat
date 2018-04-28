@@ -14,6 +14,8 @@ use BotMan\BotMan\Messages\Incoming\Answer;
 class RocketChatDriver extends HttpDriver
 {
 
+    // TODO: Implement login + caching of user_id and auth_token
+
     const DRIVER_NAME = 'RocketChat';
 
     /** @var array */
@@ -34,13 +36,23 @@ class RocketChatDriver extends HttpDriver
     }
 
     /**
+     * Verify that the request is valid agains the configured token
+     * @method isValidRequest
+     * @return boolean
+     */
+    protected function isValidRequest()
+    {
+        return !empty($this->config->get('token')) && ($this->event->get('token') == $this->config->get('token'));
+    }
+
+    /**
      * Determine if the request is for this driver.
      *
      * @return bool
      */
     public function matchesRequest()
     {
-        return ! is_null($this->config->get('matchingKeys')) && Collection::make($this->config->get('matchingKeys'))->diff($this->event->keys())->isEmpty();
+        return ! is_null($this->config->get('matchingKeys')) && Collection::make($this->config->get('matchingKeys'))->diff($this->event->keys())->isEmpty() && $this->isValidRequest();
     }
 
     /**
@@ -48,7 +60,7 @@ class RocketChatDriver extends HttpDriver
      */
      public function isConfigured()
      {
-         return ! empty($this->config->get('tokens')) && ! empty($this->config->get('endpoint')) && ! empty($this->config->get('matchingKeys'));
+         return ! empty($this->config->get('token')) && ! empty($this->config->get('endpoint')) && ! empty($this->config->get('matchingKeys'));
      }
 
     /**
@@ -88,8 +100,9 @@ class RocketChatDriver extends HttpDriver
     */
     public function getUser(IncomingMessage $matchingMessage)
     {
-        $userId = $matchingMessage->getPayload()->get('user_id');
-        $username = $matchingMessage->getPayload()->get('user_name');
+        $payload = Collection::make($matchingMessage->getPayload());
+        $userId = $payload->get('user_id');
+        $username = $payload->get('user_name');
         return new User($userId, null, null, $username);
     }
 
@@ -114,9 +127,25 @@ class RocketChatDriver extends HttpDriver
             $this->errorMessage = 'Unsupported message type.';
             $this->replyStatusCode = 500;
         }
+
+        $payload = Collection::make($matchingMessage->getPayload());
+
+        if (is_null($payload->get('channel_name'))) {
+
+            // Direct Message answer
+            return [
+                'text' => $message->getText(),
+                'roomId' => $payload->get('user_id'),
+            ];
+
+        }
+
+        // Channel answer
         return [
             'text' => $message->getText(),
+            'roomId' => $payload->get('channel_id'),
         ];
+
     }
 
     /**
@@ -125,12 +154,17 @@ class RocketChatDriver extends HttpDriver
     */
     public function sendPayload($payload)
     {
-        $url = str_finish($this->config->get('endpoint'), '/') . $this->config->get('tokens')['incoming'];
+
+        $url = str_finish($this->config->get('endpoint'), '/') . 'api/v1/chat.postMessage';
+
         $response = $this->http->post($url, [], $payload, [
             'Content-Type: application/json',
+            'X-Auth-Token: ' . $this->config->get('auth')['token'],
+            'X-User-Id: ' . $this->config->get('auth')['user_id'],
         ], true);
 
         return $response;
+
     }
 
 }
