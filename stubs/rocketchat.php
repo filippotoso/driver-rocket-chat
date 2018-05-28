@@ -17,6 +17,10 @@ return [
      */
     'endpoint' => '',
 
+    /**
+     * The user ID of the bot (to avoid infinite loops)
+     */
+    'user_id' =>  env('ROCKET_CHAT_USER_ID', ''),
 
     /**
      * Rocket Chat Both Auth
