@@ -52,16 +52,16 @@ class RocketChatDriver extends HttpDriver
      */
     public function matchesRequest()
     {
-        return ! is_null($this->config->get('matchingKeys')) && Collection::make($this->config->get('matchingKeys'))->diff($this->event->keys())->isEmpty() && $this->isValidRequest();
+        return !is_null($this->config->get('matchingKeys')) && Collection::make($this->config->get('matchingKeys'))->diff($this->event->keys())->isEmpty() && $this->isValidRequest();
     }
 
     /**
      * @return bool
      */
-     public function isConfigured()
-     {
-         return ! empty($this->config->get('token')) && ! empty($this->config->get('endpoint')) && ! empty($this->config->get('matchingKeys'));
-     }
+    public function isConfigured()
+    {
+        return !empty($this->config->get('token')) && !empty($this->config->get('endpoint')) && !empty($this->config->get('matchingKeys'));
+    }
 
     /**
      * Low-level method to perform driver specific API requests.
@@ -77,10 +77,10 @@ class RocketChatDriver extends HttpDriver
     }
 
     /**
-    * Retrieve the chat message.
-    *
-    * @return array
-    */
+     * Retrieve the chat message.
+     *
+     * @return array
+     */
     public function getMessages()
     {
         if (empty($this->messages)) {
@@ -94,10 +94,10 @@ class RocketChatDriver extends HttpDriver
     }
 
     /**
-    * Retrieve User information.
-    * @param IncomingMessage $matchingMessage
-    * @return UserInterface
-    */
+     * Retrieve User information.
+     * @param IncomingMessage $matchingMessage
+     * @return UserInterface
+     */
     public function getUser(IncomingMessage $matchingMessage)
     {
         $payload = Collection::make($matchingMessage->getPayload());
@@ -107,23 +107,23 @@ class RocketChatDriver extends HttpDriver
     }
 
     /**
-    * @param IncomingMessage $message
-    * @return \BotMan\BotMan\Messages\Incoming\Answer
-    */
+     * @param IncomingMessage $message
+     * @return \BotMan\BotMan\Messages\Incoming\Answer
+     */
     public function getConversationAnswer(IncomingMessage $message)
     {
         return Answer::create($message->getText())->setMessage($message);
     }
 
     /**
-    * @param string|Question|OutgoingMessage $message
-    * @param IncomingMessage $matchingMessage
-    * @param array $additionalParameters
-    * @return Response
-    */
+     * @param string|Question|OutgoingMessage $message
+     * @param IncomingMessage $matchingMessage
+     * @param array $additionalParameters
+     * @return Response
+     */
     public function buildServicePayload($message, $matchingMessage, $additionalParameters = [])
     {
-        if (! $message instanceof WebAccess && ! $message instanceof OutgoingMessage) {
+        if (!$message instanceof WebAccess && !$message instanceof OutgoingMessage) {
             $this->errorMessage = 'Unsupported message type.';
             $this->replyStatusCode = 500;
         }
@@ -149,14 +149,12 @@ class RocketChatDriver extends HttpDriver
     }
 
     /**
-    * @param mixed $payload
-    * @return Response
-    */
+     * @param mixed $payload
+     * @return Response
+     */
     public function sendPayload($payload)
     {
-
-        $url = str_finish($this->config->get('endpoint'), '/') . 'api/v1/chat.postMessage';
-
+        $url = rtrim($this->config->get('endpoint'), '/') . '/' . $this->config->get('tokens')['incoming'];
         $response = $this->http->post($url, [], $payload, [
             'Content-Type: application/json',
             'X-Auth-Token: ' . $this->config->get('auth')['token'],
